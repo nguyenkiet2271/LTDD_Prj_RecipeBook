@@ -1,21 +1,21 @@
 {
   "expo": {
-    "name": "LTDD_Prj",
-    "slug": "LTDD_Prj",
+    "name": "ChefMate - Sổ Tay Nấu Ăn",
+    "slug": "chefmate-recipe-book",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chefmate.recipebook"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#ea580c",
+        "foregroundImage": "./assets/android-icon-foreground.png"
       },
+      "package": "com.chefmate.recipebook",
       "predictiveBackGestureEnabled": false
     },
     "web": {
