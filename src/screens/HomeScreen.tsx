@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
@@ -144,7 +145,7 @@ export const HomeScreen: React.FC = () => {
             borderColor="#fdba74"
             padding={16}
           >
-            <XStack justifyContent="space-between" alignItems="center">
+            <XStack justifyContent="space-between" alignItems="center" gap={12}>
               <YStack flex={1} gap={4}>
                 <XStack alignItems="center" gap={6}>
                   <Sparkles size={16} color="#ea580c" />
@@ -156,6 +157,12 @@ export const HomeScreen: React.FC = () => {
                   Tủ lạnh còn gì nấu nấy! Nhập nguyên liệu để AI tạo công thức ngay.
                 </Text>
               </YStack>
+
+              <Image
+                source={{ uri: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300' }}
+                style={{ width: 56, height: 56, borderRadius: 28 }}
+                resizeMode="cover"
+              />
 
               <Button
                 size="sm"

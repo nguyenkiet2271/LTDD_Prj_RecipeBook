@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, View } from 'react-native';
-import { Card, XStack, YStack, Text, Image, Button } from 'tamagui';
+import { TouchableOpacity, StyleSheet, View, Image } from 'react-native';
+import { Card, XStack, YStack, Text } from 'tamagui';
 import { Heart, Clock, Flame, ChefHat } from 'lucide-react-native';
 import { Recipe } from '../types/recipe';
 import { useAppDispatch, useAppSelector } from '../redux/store';
@@ -24,6 +24,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     dispatch(toggleFavorite(recipe));
   };
 
+  const imageUri = recipe.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800';
+
   return (
     <Card
       style={{ elevation: 2 }}
@@ -37,11 +39,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     >
       <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
         <View style={styles.imageContainer}>
-          {/* Ảnh món ăn */}
+          {/* Ảnh món ăn dùng thẻ Image chuẩn React Native để hiển thị tốt 100% trên cả Web & Mobile */}
           <Image
-            source={{ uri: recipe.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800' }}
-            height={160}
-            width="100%"
+            source={{ uri: imageUri }}
+            style={styles.recipeImage}
             resizeMode="cover"
           />
 
@@ -129,6 +130,12 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     height: 160,
+    backgroundColor: '#f1f5f9',
+  },
+  recipeImage: {
+    width: '100%',
+    height: 160,
+    backgroundColor: '#e2e8f0',
   },
   heartButton: {
     position: 'absolute',

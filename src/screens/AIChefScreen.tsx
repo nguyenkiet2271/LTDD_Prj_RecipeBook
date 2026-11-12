@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
@@ -259,6 +260,13 @@ export const AIChefScreen: React.FC = () => {
                 padding={16}
                 gap={10}
               >
+                {/* Ảnh món ăn do AI đề xuất */}
+                <Image
+                  source={{ uri: item.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800' }}
+                  style={{ width: '100%', height: 160, borderRadius: 12, backgroundColor: '#f1f5f9' }}
+                  resizeMode="cover"
+                />
+
                 <Text fontSize={17} fontWeight="800" color="#0f172a">
                   {item.title}
                 </Text>
