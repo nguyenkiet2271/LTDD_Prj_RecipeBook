@@ -21,223 +21,428 @@ import {
   ChefHat,
   Heart,
   ShoppingCart,
-  CheckCircle2,
   Moon,
   Sun,
-  Smartphone,
-  Code2,
+  BookOpen,
+  Bell,
+  Scale,
+  ShieldCheck,
+  Star,
+  LogOut,
+  ChevronRight,
+  Camera,
+  Award,
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useAppSelector } from '../redux/store';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/recipe';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectFavorites } from '../redux/favoriteSlice';
 import { selectShoppingItems } from '../redux/shoppingSlice';
+import { selectIsDarkMode, toggleTheme } from '../redux/themeSlice';
 
 export const ProfileScreen: React.FC = () => {
-  const navigation = useNavigation();
-  const { width, height } = useWindowDimensions();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
+  const dispatch = useAppDispatch();
   const favorites = useAppSelector(selectFavorites);
   const shoppingItems = useAppSelector(selectShoppingItems);
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Đăng xuất',
+      'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?',
+      [
+        { text: 'Hủy', style: 'cancel' },
+        {
+          text: 'Đăng xuất',
+          style: 'destructive',
+          onPress: () => Alert.alert('Thông báo', 'Đã đăng xuất tài khoản thành công!'),
+        },
+      ]
+    );
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc',
+      }}
+      edges={['top']}
+    >
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
         {/* Header */}
         <XStack alignItems="center" gap={12} marginBottom={16}>
           <TouchableOpacity
             style={{
-              width: 36,
-              height: 36,
-              borderRadius: 18,
-              backgroundColor: '#ffffff',
+              width: 38,
+              height: 38,
+              borderRadius: 19,
+              backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
               borderWidth: 1,
-              borderColor: '#e2e8f0',
+              borderColor: isDarkMode ? '#334155' : '#e2e8f0',
               justifyContent: 'center',
               alignItems: 'center',
             }}
             onPress={() => navigation.goBack()}
           >
-            <ArrowLeft size={18} color="#0f172a" />
+            <ArrowLeft size={18} color={isDarkMode ? '#f8fafc' : '#0f172a'} />
           </TouchableOpacity>
-          <Text fontSize={20} fontWeight="800" color="#0f172a">
-            Hồ Sơ & Cài Đặt Dự Án
+          <Text fontSize={20} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+            Hồ Sơ Cá Nhân
           </Text>
         </XStack>
 
-        {/* Thông tin sinh viên & Nhóm làm bài */}
+        {/* Thông tin người dùng (User Profile Card) */}
         <Card
           borderRadius={20}
           padding={16}
-          backgroundColor="#ffffff"
+          backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
           borderWidth={1}
-          borderColor="#e2e8f0"
-          alignItems="center"
+          borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
           marginBottom={16}
         >
-          <View
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 32,
-              backgroundColor: '#ffedd5',
-              borderWidth: 2,
-              borderColor: '#ea580c',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <ChefHat size={32} color="#ea580c" />
-          </View>
+          <XStack alignItems="center" gap={14}>
+            {/* Avatar có nút đổi ảnh */}
+            <View style={{ position: 'relative' }}>
+              <View
+                style={{
+                  width: 68,
+                  height: 68,
+                  borderRadius: 34,
+                  backgroundColor: '#ffedd5',
+                  borderWidth: 2,
+                  borderColor: '#ea580c',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <ChefHat size={34} color="#ea580c" />
+              </View>
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  bottom: -2,
+                  right: -2,
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  backgroundColor: '#ea580c',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderWidth: 2,
+                  borderColor: isDarkMode ? '#1e293b' : '#ffffff',
+                }}
+                onPress={() => Alert.alert('Ảnh đại diện', 'Chọn ảnh mới từ thư viện thiết bị')}
+              >
+                <Camera size={12} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
 
-          <Text fontSize={18} fontWeight="800" color="#0f172a" marginTop={10}>
-            Nhóm 2 Bạn Sinh Viên
-          </Text>
-          <Text fontSize={13} color="#64748b">
-            Dự án: Sổ Tay Nấu Ăn (ChefMate Recipe Book)
-          </Text>
-          <Text fontSize={12} color="#059669" fontWeight="700" marginTop={4}>
-            Môn học: Lập trình Thiết bị Di động (LTDD)
-          </Text>
-
-          {/* 2 Thống kê nhanh từ Redux Toolkit */}
-          <XStack
-            width="100%"
-            marginTop={16}
-            paddingTop={12}
-            borderTopWidth={1}
-            borderTopColor="#f1f5f9"
-            justifyContent="space-around"
-          >
-            <YStack alignItems="center">
+            <YStack flex={1} gap={2}>
               <XStack alignItems="center" gap={6}>
-                <Heart size={16} color="#e11d48" fill="#e11d48" />
-                <Text fontSize={16} fontWeight="800" color="#0f172a">
-                  {favorites.length}
+                <Text fontSize={18} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                  Chef Huy
                 </Text>
+                <XStack
+                  backgroundColor="#ffedd5"
+                  paddingHorizontal={6}
+                  paddingVertical={2}
+                  borderRadius={10}
+                  alignItems="center"
+                  gap={3}
+                >
+                  <Award size={11} color="#ea580c" />
+                  <Text fontSize={10} fontWeight="800" color="#ea580c">
+                    PRO
+                  </Text>
+                </XStack>
               </XStack>
-              <Text fontSize={11} color="#94a3b8">
-                Món yêu thích
+
+              <Text fontSize={13} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+                huy.chefmate@gmail.com
               </Text>
-            </YStack>
-
-            <Separator vertical height={30} borderColor="#e2e8f0" />
-
-            <YStack alignItems="center">
-              <XStack alignItems="center" gap={6}>
-                <ShoppingCart size={16} color="#ea580c" />
-                <Text fontSize={16} fontWeight="800" color="#0f172a">
-                  {shoppingItems.length}
-                </Text>
-              </XStack>
-              <Text fontSize={11} color="#94a3b8">
-                Đồ cần đi chợ
+              <Text fontSize={11} color="#059669" fontWeight="600">
+                Thành viên Bếp Vàng • Ẩm thực gia
               </Text>
             </YStack>
           </XStack>
+
+          {/* 3 Thống kê nhanh */}
+          <XStack
+            width="100%"
+            marginTop={16}
+            paddingTop={14}
+            borderTopWidth={1}
+            borderTopColor={isDarkMode ? '#334155' : '#f1f5f9'}
+            justifyContent="space-around"
+          >
+            <TouchableOpacity
+              style={{ alignItems: 'center' }}
+              onPress={() => navigation.navigate('CreateRecipe')}
+            >
+              <Text fontSize={16} fontWeight="800" color="#ea580c">
+                8
+              </Text>
+              <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+                Món đã tạo
+              </Text>
+            </TouchableOpacity>
+
+            <Separator vertical height={30} borderColor={isDarkMode ? '#334155' : '#e2e8f0'} />
+
+            <TouchableOpacity
+              style={{ alignItems: 'center' }}
+              onPress={() => (navigation as any).navigate('FavoritesTab')}
+            >
+              <XStack alignItems="center" gap={4}>
+                <Heart size={14} color="#e11d48" fill="#e11d48" />
+                <Text fontSize={16} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                  {favorites.length}
+                </Text>
+              </XStack>
+              <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+                Món yêu thích
+              </Text>
+            </TouchableOpacity>
+
+            <Separator vertical height={30} borderColor={isDarkMode ? '#334155' : '#e2e8f0'} />
+
+            <TouchableOpacity
+              style={{ alignItems: 'center' }}
+              onPress={() => (navigation as any).navigate('ShoppingTab')}
+            >
+              <XStack alignItems="center" gap={4}>
+                <ShoppingCart size={14} color="#ea580c" />
+                <Text fontSize={16} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                  {shoppingItems.length}
+                </Text>
+              </XStack>
+              <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+                Đồ cần mua
+              </Text>
+            </TouchableOpacity>
+          </XStack>
         </Card>
 
-        {/* Cài đặt Giao diện Sáng / Tối */}
-        <Card borderWidth={1} borderColor="#e2e8f0" borderRadius={16} padding={14} backgroundColor="#ffffff" marginBottom={16}>
-          <XStack justifyContent="space-between" alignItems="center">
+        {/* Mục 1: Quản lý công thức & Bếp cá nhân */}
+        <Text fontSize={13} fontWeight="800" color={isDarkMode ? '#94a3b8' : '#64748b'} marginBottom={8} marginLeft={4}>
+          QUẢN LÝ BẾP & CÔNG THỨC
+        </Text>
+        <Card
+          borderWidth={1}
+          borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
+          borderRadius={16}
+          backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+          marginBottom={16}
+          overflow="hidden"
+        >
+          <TouchableOpacity
+            style={{
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottomWidth: 1,
+              borderBottomColor: isDarkMode ? '#334155' : '#f1f5f9',
+            }}
+            onPress={() => navigation.navigate('CreateRecipe')}
+          >
             <XStack alignItems="center" gap={10}>
-              {isDarkMode ? <Moon size={20} color="#6366f1" /> : <Sun size={20} color="#f59e0b" />}
+              <BookOpen size={18} color="#ea580c" />
+              <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                Đăng tải công thức mới
+              </Text>
+            </XStack>
+            <ChevronRight size={18} color={isDarkMode ? '#64748b' : '#94a3b8'} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+            onPress={() => (navigation as any).navigate('FavoritesTab')}
+          >
+            <XStack alignItems="center" gap={10}>
+              <Heart size={18} color="#e11d48" />
+              <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                Bộ sưu tập món ăn đã lưu
+              </Text>
+            </XStack>
+            <ChevronRight size={18} color={isDarkMode ? '#64748b' : '#94a3b8'} />
+          </TouchableOpacity>
+        </Card>
+
+        {/* Mục 2: Cài đặt ứng dụng */}
+        <Text fontSize={13} fontWeight="800" color={isDarkMode ? '#94a3b8' : '#64748b'} marginBottom={8} marginLeft={4}>
+          CÀI ĐẶT ỨNG DỤNG
+        </Text>
+        <Card
+          borderWidth={1}
+          borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
+          borderRadius={16}
+          backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+          marginBottom={16}
+          overflow="hidden"
+        >
+          {/* Chế độ Dark Mode */}
+          <XStack
+            justifyContent="space-between"
+            alignItems="center"
+            padding={14}
+            borderBottomWidth={1}
+            borderBottomColor={isDarkMode ? '#334155' : '#f1f5f9'}
+          >
+            <XStack alignItems="center" gap={10}>
+              {isDarkMode ? <Moon size={18} color="#6366f1" /> : <Sun size={18} color="#f59e0b" />}
               <YStack>
-                <Text fontSize={14} fontWeight="700" color="#0f172a">
+                <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                   Chế độ ban đêm (Dark Mode)
                 </Text>
-                <Text fontSize={11} color="#94a3b8">
-                  Chuyển đổi giao diện Tamagui Theme
+                <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+                  Giao diện tối giúp dịu mắt khi nấu ăn ban đêm
                 </Text>
               </YStack>
             </XStack>
 
             <Switch
               value={isDarkMode}
-              onValueChange={setIsDarkMode}
-              trackColor={{ false: '#cbd5e1', true: '#6366f1' }}
-              thumbColor={isDarkMode ? '#ffffff' : '#f8fafc'}
+              onValueChange={() => {
+                dispatch(toggleTheme());
+              }}
+              trackColor={{ false: '#cbd5e1', true: '#ea580c' }}
+              thumbColor="#ffffff"
             />
           </XStack>
-        </Card>
 
-        {/* Thông số thiết bị & Responsive */}
-        <Card borderWidth={1} borderColor="#e2e8f0" borderRadius={16} padding={14} backgroundColor="#ffffff" marginBottom={16}>
-          <XStack alignItems="center" gap={8} marginBottom={8}>
-            <Smartphone size={18} color="#0284c7" />
-            <Text fontSize={14} fontWeight="800" color="#0f172a">
-              Thông số hiển thị & Responsive
-            </Text>
-          </XStack>
-          <Text fontSize={12} color="#64748b" lineHeight={18}>
-            • Kích thước màn hình: {Math.round(width)} x {Math.round(height)} px
-          </Text>
-          <Text fontSize={12} color="#64748b" lineHeight={18}>
-            • Chế độ hiển thị:{' '}
-            <Text fontWeight="700" color={isTablet ? '#059669' : '#ea580c'}>
-              {isTablet ? 'Tablet / iPad / Xoay ngang (2 cột Grid)' : 'Điện thoại dọc (1 cột)'}
-            </Text>
-          </Text>
-          <Text fontSize={12} color="#64748b" lineHeight={18}>
-            • Thư viện giao diện: <Text fontWeight="700" color="#0f172a">Tamagui 3.3.2 Responsive</Text>
-          </Text>
-        </Card>
+          {/* Thông báo nhắc giờ */}
+          <XStack
+            justifyContent="space-between"
+            alignItems="center"
+            padding={14}
+            borderBottomWidth={1}
+            borderBottomColor={isDarkMode ? '#334155' : '#f1f5f9'}
+          >
+            <XStack alignItems="center" gap={10}>
+              <Bell size={18} color="#059669" />
+              <YStack>
+                <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                  Âm thanh hẹn giờ nấu ăn
+                </Text>
+                <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+                  Chuông báo động khi hết giờ nấu bước
+                </Text>
+              </YStack>
+            </XStack>
 
-        {/* Bảng checklist đối chiếu 100% tiêu chí đề bài của Giảng viên */}
-        <Card
-          borderRadius={16}
-          padding={14}
-          backgroundColor="#ecfdf5"
-          borderWidth={1}
-          borderColor="#6ee7b7"
-          marginBottom={16}
-        >
-          <XStack alignItems="center" gap={8} marginBottom={10}>
-            <CheckCircle2 size={18} color="#059669" />
-            <Text fontSize={15} fontWeight="800" color="#065f46">
-              ĐỐI CHIẾU TIÊU CHÍ CHẤM ĐIỂM (100%)
-            </Text>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
+              trackColor={{ false: '#cbd5e1', true: '#ea580c' }}
+              thumbColor="#ffffff"
+            />
           </XStack>
 
-          {[
-            'Chức năng: >10 chức năng (CRUD, Search, Timer, Shopping, AI)',
-            'Backend: Supabase REST API (PostgreSQL)',
-            'Giao thức mạng: Axios Client + Interceptor',
-            'Khung dự án: Expo Project (TypeScript)',
-            'Trí tuệ nhân tạo: Gemini 1.5 Flash API (AI Chef)',
-            'State management: Redux Toolkit (Favorites & Shopping)',
-            'Responsive: Hỗ trợ Tablet / iPad và Xoay ngang với Tamagui',
-            'Animation: Hiệu ứng chuyển động & Timer đếm ngược',
-            'Thư viện UI: Tamagui (XStack, YStack, Card, Button, Input)',
-            'Chạy trên thiết bị thật: Đã kiểm thử qua Expo Go & EAS Build',
-          ].map((item, idx) => (
-            <XStack key={idx} alignItems="center" gap={8} marginVertical={4}>
-              <CheckCircle2 size={13} color="#059669" />
-              <Text fontSize={12} color="#047857" fontWeight="600">
-                {item}
+          {/* Đơn vị đo lường */}
+          <TouchableOpacity
+            style={{
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+            onPress={() => Alert.alert('Đơn vị', 'Ứng dụng đang dùng hệ đo lường chuẩn: Gam (g) & Mililit (ml)')}
+          >
+            <XStack alignItems="center" gap={10}>
+              <Scale size={18} color="#0284c7" />
+              <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                Đơn vị đo lường
               </Text>
             </XStack>
-          ))}
+            <XStack alignItems="center" gap={4}>
+              <Text fontSize={12} color="#ea580c" fontWeight="600">
+                Gam & Ml
+              </Text>
+              <ChevronRight size={18} color={isDarkMode ? '#64748b' : '#94a3b8'} />
+            </XStack>
+          </TouchableOpacity>
         </Card>
 
-        {/* Giới thiệu mã nguồn & GitHub */}
+        {/* Mục 3: Hỗ trợ & Thông tin */}
+        <Text fontSize={13} fontWeight="800" color={isDarkMode ? '#94a3b8' : '#64748b'} marginBottom={8} marginLeft={4}>
+          HỖ TRỢ & PHÁP LÝ
+        </Text>
+        <Card
+          borderWidth={1}
+          borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
+          borderRadius={16}
+          backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+          marginBottom={20}
+          overflow="hidden"
+        >
+          <TouchableOpacity
+            style={{
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottomWidth: 1,
+              borderBottomColor: isDarkMode ? '#334155' : '#f1f5f9',
+            }}
+            onPress={() => Alert.alert('Điều khoản', 'ChefMate tôn trọng bản quyền ẩm thực và bảo mật thông tin cá nhân của bạn.')}
+          >
+            <XStack alignItems="center" gap={10}>
+              <ShieldCheck size={18} color="#64748b" />
+              <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                Chính sách bảo mật & Điều khoản
+              </Text>
+            </XStack>
+            <ChevronRight size={18} color={isDarkMode ? '#64748b' : '#94a3b8'} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+            onPress={() => Alert.alert('Đánh giá 5 sao', 'Cảm ơn bạn đã yêu thích ứng dụng ChefMate!')}
+          >
+            <XStack alignItems="center" gap={10}>
+              <Star size={18} color="#f59e0b" />
+              <Text fontSize={14} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
+                Đánh giá ứng dụng
+              </Text>
+            </XStack>
+            <Text fontSize={12} color={isDarkMode ? '#64748b' : '#94a3b8'}>
+              v1.0.0
+            </Text>
+          </TouchableOpacity>
+        </Card>
+
+        {/* Nút Đăng xuất */}
         <Button
           size="lg"
-          backgroundColor="#0f172a"
+          backgroundColor={isDarkMode ? '#7f1d1d' : '#fee2e2'}
+          borderWidth={1}
+          borderColor={isDarkMode ? '#b91c1c' : '#fca5a5'}
           borderRadius={14}
-          onPress={() =>
-            Alert.alert(
-              'Mã nguồn GitHub',
-              'Dự án được quản lý tại thư mục D:\\LTDD_Prj. Bạn có thể push trực tiếp lên kho lưu trữ GitHub của nhóm!'
-            )
-          }
+          onPress={handleLogout}
         >
           <XStack alignItems="center" gap={8}>
-            <Code2 size={16} color="#ffffff" />
-            <Text color="#ffffff" fontWeight="700">
-              Xem Thông Tin GitHub Repository
+            <LogOut size={18} color="#dc2626" />
+            <Text color="#dc2626" fontWeight="800" fontSize={14}>
+              Đăng Xuất Tài Khoản
             </Text>
           </XStack>
         </Button>

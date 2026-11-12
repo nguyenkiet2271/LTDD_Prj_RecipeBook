@@ -19,9 +19,12 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { createRecipe } from '../services/recipeService';
 import { Ingredient, CookingStep } from '../types/recipe';
+import { useAppSelector } from '../redux/store';
+import { selectIsDarkMode } from '../redux/themeSlice';
 
 export const CreateRecipeScreen: React.FC = () => {
   const navigation = useNavigation();
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -127,7 +130,7 @@ export const CreateRecipeScreen: React.FC = () => {
         servings: parseInt(servings, 10) || 2,
         ingredients: validIngredients,
         steps: validSteps,
-        author_name: 'Bạn và Tôi',
+        author_name: 'Chef Huy',
       });
 
       Alert.alert('Thành công', 'Đã thêm công thức mới lên Supabase thành công!', [
@@ -141,7 +144,7 @@ export const CreateRecipeScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 120 }}>
         {/* Header */}
         <XStack alignItems="center" gap={12} marginBottom={16}>
@@ -150,17 +153,17 @@ export const CreateRecipeScreen: React.FC = () => {
               width: 36,
               height: 36,
               borderRadius: 18,
-              backgroundColor: '#ffffff',
+              backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
               borderWidth: 1,
-              borderColor: '#e2e8f0',
+              borderColor: isDarkMode ? '#334155' : '#e2e8f0',
               justifyContent: 'center',
               alignItems: 'center',
             }}
             onPress={() => navigation.goBack()}
           >
-            <ArrowLeft size={18} color="#0f172a" />
+            <ArrowLeft size={18} color={isDarkMode ? '#f8fafc' : '#0f172a'} />
           </TouchableOpacity>
-          <Text fontSize={20} fontWeight="800" color="#0f172a">
+          <Text fontSize={20} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
             Đóng Góp Công Thức Mới
           </Text>
         </XStack>
@@ -168,13 +171,16 @@ export const CreateRecipeScreen: React.FC = () => {
         <YStack gap={12}>
           {/* Tên món */}
           <YStack gap={4}>
-            <Text fontSize={13} fontWeight="700" color="#0f172a">
+            <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Tên món ăn (*):
             </Text>
             <Input
               size="md"
-              backgroundColor="#ffffff"
+              backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+              color={isDarkMode ? '#f8fafc' : '#0f172a'}
+              borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
               placeholder="Ví dụ: Bún chả Hà Nội..."
+              placeholderTextColor={(isDarkMode ? '#64748b' : '#94a3b8') as any}
               value={title}
               onChangeText={setTitle}
             />
@@ -182,7 +188,7 @@ export const CreateRecipeScreen: React.FC = () => {
 
           {/* Chọn danh mục */}
           <YStack gap={4}>
-            <Text fontSize={13} fontWeight="700" color="#0f172a">
+            <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Danh mục:
             </Text>
             <XStack flexWrap="wrap" gap={8}>
@@ -196,15 +202,15 @@ export const CreateRecipeScreen: React.FC = () => {
                 <Button
                   key={c.id}
                   size="sm"
-                  backgroundColor={categoryId === c.id ? '#ea580c' : '#ffffff'}
+                  backgroundColor={categoryId === c.id ? '#ea580c' : (isDarkMode ? '#1e293b' : '#ffffff')}
                   borderWidth={1}
-                  borderColor={categoryId === c.id ? '#ea580c' : '#cbd5e1'}
+                  borderColor={categoryId === c.id ? '#ea580c' : (isDarkMode ? '#334155' : '#cbd5e1')}
                   onPress={() => setCategoryId(c.id)}
                 >
                   <Text
                     fontSize={12}
                     fontWeight="700"
-                    color={categoryId === c.id ? '#ffffff' : '#475569'}
+                    color={categoryId === c.id ? '#ffffff' : (isDarkMode ? '#94a3b8' : '#475569')}
                   >
                     {c.name}
                   </Text>
@@ -215,21 +221,23 @@ export const CreateRecipeScreen: React.FC = () => {
 
           {/* Mô tả món ăn */}
           <YStack gap={4}>
-            <Text fontSize={13} fontWeight="700" color="#0f172a">
+            <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Mô tả ngắn:
             </Text>
             <TextInput
               style={{
-                backgroundColor: '#ffffff',
+                backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
                 borderWidth: 1,
-                borderColor: '#cbd5e1',
+                borderColor: isDarkMode ? '#334155' : '#cbd5e1',
                 borderRadius: 10,
                 padding: 10,
                 height: 70,
                 textAlignVertical: 'top',
                 fontSize: 14,
+                color: isDarkMode ? '#f8fafc' : '#0f172a',
               }}
               placeholder="Giới thiệu hương vị, nét đặc trưng của món ăn..."
+              placeholderTextColor={isDarkMode ? '#64748b' : '#94a3b8'}
               value={description}
               onChangeText={setDescription}
               multiline
@@ -238,23 +246,26 @@ export const CreateRecipeScreen: React.FC = () => {
 
           {/* Ảnh món ăn & Nút chọn từ máy */}
           <YStack gap={4}>
-            <Text fontSize={13} fontWeight="700" color="#0f172a">
+            <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Hình ảnh món ăn:
             </Text>
             <XStack gap={8} alignItems="center">
               <Input
                 flex={1}
                 size="sm"
-                backgroundColor="#ffffff"
+                backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+                color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                 placeholder="Dán link ảnh online..."
+                placeholderTextColor={(isDarkMode ? '#64748b' : '#94a3b8') as any}
                 value={imageUrl}
                 onChangeText={setImageUrl}
               />
               <Button
                 size="sm"
-                backgroundColor="#ffedd5"
+                backgroundColor={isDarkMode ? '#431407' : '#ffedd5'}
                 borderWidth={1}
-                borderColor="#fed7aa"
+                borderColor={isDarkMode ? '#9a3412' : '#fed7aa'}
                 onPress={handlePickImage}
               >
                 <XStack alignItems="center" gap={4}>
@@ -270,12 +281,14 @@ export const CreateRecipeScreen: React.FC = () => {
           {/* 4 Chỉ số: Thời gian, Calo, Khẩu phần, Độ khó */}
           <XStack gap={8}>
             <YStack flex={1} gap={4}>
-              <Text fontSize={12} fontWeight="600" color="#0f172a">
+              <Text fontSize={12} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Thời gian (phút):
               </Text>
               <Input
                 size="sm"
-                backgroundColor="#ffffff"
+                backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+                color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                 keyboardType="numeric"
                 value={cookTime}
                 onChangeText={setCookTime}
@@ -283,12 +296,14 @@ export const CreateRecipeScreen: React.FC = () => {
             </YStack>
 
             <YStack flex={1} gap={4}>
-              <Text fontSize={12} fontWeight="600" color="#0f172a">
+              <Text fontSize={12} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Calo (kcal):
               </Text>
               <Input
                 size="sm"
-                backgroundColor="#ffffff"
+                backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+                color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                 keyboardType="numeric"
                 value={calories}
                 onChangeText={setCalories}
@@ -296,12 +311,14 @@ export const CreateRecipeScreen: React.FC = () => {
             </YStack>
 
             <YStack flex={1} gap={4}>
-              <Text fontSize={12} fontWeight="600" color="#0f172a">
+              <Text fontSize={12} fontWeight="600" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Khẩu phần:
               </Text>
               <Input
                 size="sm"
-                backgroundColor="#ffffff"
+                backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+                color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                 keyboardType="numeric"
                 value={servings}
                 onChangeText={setServings}
@@ -311,7 +328,7 @@ export const CreateRecipeScreen: React.FC = () => {
 
           {/* Chọn Độ khó */}
           <YStack gap={4}>
-            <Text fontSize={13} fontWeight="700" color="#0f172a">
+            <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Độ khó:
             </Text>
             <XStack gap={8}>
@@ -320,15 +337,15 @@ export const CreateRecipeScreen: React.FC = () => {
                   key={level}
                   flex={1}
                   size="sm"
-                  backgroundColor={difficulty === level ? '#059669' : '#ffffff'}
+                  backgroundColor={difficulty === level ? '#059669' : (isDarkMode ? '#1e293b' : '#ffffff')}
                   borderWidth={1}
-                  borderColor={difficulty === level ? '#059669' : '#cbd5e1'}
+                  borderColor={difficulty === level ? '#059669' : (isDarkMode ? '#334155' : '#cbd5e1')}
                   onPress={() => setDifficulty(level)}
                 >
                   <Text
                     fontSize={12}
                     fontWeight="700"
-                    color={difficulty === level ? '#ffffff' : '#475569'}
+                    color={difficulty === level ? '#ffffff' : (isDarkMode ? '#94a3b8' : '#475569')}
                   >
                     {level}
                   </Text>
@@ -338,16 +355,23 @@ export const CreateRecipeScreen: React.FC = () => {
           </YStack>
 
           {/* Danh sách nguyên liệu */}
-          <Card borderWidth={1} borderColor="#e2e8f0" borderRadius={16} padding={14} backgroundColor="#ffffff" marginTop={8}>
+          <Card
+            borderWidth={1}
+            borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
+            borderRadius={16}
+            padding={14}
+            backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+            marginTop={8}
+          >
             <XStack justifyContent="space-between" alignItems="center" marginBottom={8}>
-              <Text fontSize={14} fontWeight="800" color="#0f172a">
+              <Text fontSize={14} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Nguyên liệu ({ingredients.length}):
               </Text>
               <Button
                 size="sm"
-                backgroundColor="#ffedd5"
+                backgroundColor={isDarkMode ? '#431407' : '#ffedd5'}
                 borderWidth={1}
-                borderColor="#fed7aa"
+                borderColor={isDarkMode ? '#9a3412' : '#fed7aa'}
                 onPress={addIngredientField}
               >
                 <XStack alignItems="center" gap={4}>
@@ -366,15 +390,23 @@ export const CreateRecipeScreen: React.FC = () => {
                     flex={2}
                     size="sm"
                     placeholder="Tên nguyên liệu (VD: Thịt bò)"
+                    placeholderTextColor={(isDarkMode ? '#64748b' : '#94a3b8') as any}
                     value={ing.name}
                     onChangeText={(val) => updateIngredient(idx, 'name', val)}
+                    backgroundColor={isDarkMode ? '#0f172a' : '#f8fafc'}
+                    color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                    borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                   />
                   <Input
                     flex={1}
                     size="sm"
                     placeholder="Lượng (VD: 300g)"
+                    placeholderTextColor={(isDarkMode ? '#64748b' : '#94a3b8') as any}
                     value={ing.amount}
                     onChangeText={(val) => updateIngredient(idx, 'amount', val)}
+                    backgroundColor={isDarkMode ? '#0f172a' : '#f8fafc'}
+                    color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                    borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                   />
                   {ingredients.length > 1 && (
                     <TouchableOpacity onPress={() => removeIngredientField(idx)}>
@@ -387,16 +419,23 @@ export const CreateRecipeScreen: React.FC = () => {
           </Card>
 
           {/* Danh sách các bước làm */}
-          <Card borderWidth={1} borderColor="#e2e8f0" borderRadius={16} padding={14} backgroundColor="#ffffff" marginTop={8}>
+          <Card
+            borderWidth={1}
+            borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
+            borderRadius={16}
+            padding={14}
+            backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
+            marginTop={8}
+          >
             <XStack justifyContent="space-between" alignItems="center" marginBottom={8}>
-              <Text fontSize={14} fontWeight="800" color="#0f172a">
+              <Text fontSize={14} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Các bước thực hiện ({steps.length}):
               </Text>
               <Button
                 size="sm"
-                backgroundColor="#ffedd5"
+                backgroundColor={isDarkMode ? '#431407' : '#ffedd5'}
                 borderWidth={1}
-                borderColor="#fed7aa"
+                borderColor={isDarkMode ? '#9a3412' : '#fed7aa'}
                 onPress={addStepField}
               >
                 <XStack alignItems="center" gap={4}>
@@ -429,8 +468,12 @@ export const CreateRecipeScreen: React.FC = () => {
                     flex={1}
                     size="sm"
                     placeholder={`Nội dung bước ${st.step}...`}
+                    placeholderTextColor={(isDarkMode ? '#64748b' : '#94a3b8') as any}
                     value={st.instruction}
                     onChangeText={(val) => updateStep(idx, val)}
+                    backgroundColor={isDarkMode ? '#0f172a' : '#f8fafc'}
+                    color={isDarkMode ? '#f8fafc' : '#0f172a'}
+                    borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                   />
 
                   {steps.length > 1 && (

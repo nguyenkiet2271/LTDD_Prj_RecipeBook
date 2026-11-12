@@ -30,6 +30,7 @@ import { getRecipeById } from '../services/recipeService';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectIsFavorite, toggleFavorite } from '../redux/favoriteSlice';
 import { addIngredientsToShoppingList } from '../redux/shoppingSlice';
+import { selectIsDarkMode } from '../redux/themeSlice';
 
 type RecipeDetailRouteProp = RouteProp<RootStackParamList, 'RecipeDetail'>;
 
@@ -40,6 +41,8 @@ export const RecipeDetailScreen: React.FC = () => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
+
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   const [recipe, setRecipe] = useState<Recipe | null>(initialRecipe || null);
   const [isLoading, setIsLoading] = useState<boolean>(!initialRecipe);
@@ -67,9 +70,9 @@ export const RecipeDetailScreen: React.FC = () => {
 
   if (isLoading || !recipe) {
     return (
-      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="#ffffff">
+      <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor={isDarkMode ? '#0f172a' : '#ffffff'}>
         <ActivityIndicator size="large" color="#ea580c" />
-        <Text marginTop={12} color="#64748b">Đang tải chi tiết món ăn...</Text>
+        <Text marginTop={12} color={isDarkMode ? '#94a3b8' : '#64748b'}>Đang tải chi tiết món ăn...</Text>
       </YStack>
     );
   }
@@ -96,7 +99,7 @@ export const RecipeDetailScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }} edges={['top', 'bottom']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? '#0f172a' : '#ffffff' }} edges={['top', 'bottom']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Ảnh bìa & Nút điều hướng */}
         <View style={[styles.heroContainer, { height: isTablet ? 380 : 280 }]}>
@@ -108,22 +111,22 @@ export const RecipeDetailScreen: React.FC = () => {
 
           {/* Nút Quay lại */}
           <TouchableOpacity
-            style={styles.navButtonLeft}
+            style={[styles.navButtonLeft, { backgroundColor: isDarkMode ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)' }]}
             onPress={() => navigation.goBack()}
             activeOpacity={0.8}
           >
-            <ArrowLeft size={20} color="#0f172a" />
+            <ArrowLeft size={20} color={isDarkMode ? '#f8fafc' : '#0f172a'} />
           </TouchableOpacity>
 
-          {/* Nút Yêu thích (Redux) */}
+          {/* Nút Yêu thích */}
           <TouchableOpacity
-            style={styles.navButtonRight}
+            style={[styles.navButtonRight, { backgroundColor: isDarkMode ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)' }]}
             onPress={() => dispatch(toggleFavorite(recipe))}
             activeOpacity={0.8}
           >
             <Heart
               size={20}
-              color={isFav ? '#e11d48' : '#64748b'}
+              color={isFav ? '#e11d48' : isDarkMode ? '#94a3b8' : '#64748b'}
               fill={isFav ? '#e11d48' : 'none'}
             />
           </TouchableOpacity>
@@ -131,11 +134,11 @@ export const RecipeDetailScreen: React.FC = () => {
 
         {/* Nội dung chi tiết */}
         <YStack padding={16} gap={12}>
-          <Text fontSize={24} fontWeight="800" color="#0f172a">
+          <Text fontSize={24} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
             {recipe.title}
           </Text>
 
-          <Text fontSize={14} color="#64748b" lineHeight={22}>
+          <Text fontSize={14} color={isDarkMode ? '#94a3b8' : '#64748b'} lineHeight={22}>
             {recipe.description}
           </Text>
 
@@ -143,64 +146,75 @@ export const RecipeDetailScreen: React.FC = () => {
           <Card
             borderRadius={16}
             padding={12}
-            backgroundColor="#f8fafc"
+            backgroundColor={isDarkMode ? '#1e293b' : '#f8fafc'}
             borderWidth={1}
-            borderColor="#e2e8f0"
+            borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
             marginTop={8}
           >
             <XStack justifyContent="space-around" alignItems="center">
               <YStack alignItems="center" gap={4}>
                 <Clock size={18} color="#ea580c" />
-                <Text fontSize={13} fontWeight="700" color="#0f172a">
+                <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                   {recipe.cook_time}p
                 </Text>
-                <Text fontSize={11} color="#94a3b8">
+                <Text fontSize={11} color={isDarkMode ? '#64748b' : '#94a3b8'}>
                   Thời gian
                 </Text>
               </YStack>
 
-              <Separator vertical height={35} borderColor="#e2e8f0" />
+              <Separator vertical height={35} borderColor={isDarkMode ? '#334155' : '#e2e8f0'} />
 
               <YStack alignItems="center" gap={4}>
                 <Flame size={18} color="#dc2626" />
-                <Text fontSize={13} fontWeight="700" color="#0f172a">
+                <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                   {recipe.calories} kcal
                 </Text>
-                <Text fontSize={11} color="#94a3b8">
+                <Text fontSize={11} color={isDarkMode ? '#64748b' : '#94a3b8'}>
                   Năng lượng
                 </Text>
               </YStack>
 
-              <Separator vertical height={35} borderColor="#e2e8f0" />
+              <Separator vertical height={35} borderColor={isDarkMode ? '#334155' : '#e2e8f0'} />
 
               <YStack alignItems="center" gap={4}>
                 <Users size={18} color="#0284c7" />
-                <Text fontSize={13} fontWeight="700" color="#0f172a">
+                <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                   {recipe.servings || 2} người
                 </Text>
-                <Text fontSize={11} color="#94a3b8">
+                <Text fontSize={11} color={isDarkMode ? '#64748b' : '#94a3b8'}>
                   Khẩu phần
                 </Text>
               </YStack>
 
-              <Separator vertical height={35} borderColor="#e2e8f0" />
+              <Separator vertical height={35} borderColor={isDarkMode ? '#334155' : '#e2e8f0'} />
 
               <YStack alignItems="center" gap={4}>
                 <ChefHat size={18} color="#059669" />
-                <Text fontSize={13} fontWeight="700" color="#0f172a">
+                <Text fontSize={13} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                   {recipe.difficulty}
                 </Text>
-                <Text fontSize={11} color="#94a3b8">
+                <Text fontSize={11} color={isDarkMode ? '#64748b' : '#94a3b8'}>
                   Độ khó
                 </Text>
               </YStack>
             </XStack>
           </Card>
 
+          {/* Tác giả */}
+          <XStack alignItems="center" gap={8} marginTop={4}>
+            <ChefHat size={16} color="#059669" />
+            <Text fontSize={12} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+              Công thức đóng góp bởi:{' '}
+              <Text fontWeight="700" color="#059669">
+                {recipe.author_name === 'Chef Tuấn' ? 'Chef Huy' : (recipe.author_name || 'Chef Huy')}
+              </Text>
+            </Text>
+          </XStack>
+
           {/* Phần Nguyên liệu */}
           <YStack marginTop={12} gap={10}>
             <XStack justifyContent="space-between" alignItems="center">
-              <Text fontSize={18} fontWeight="800" color="#0f172a">
+              <Text fontSize={18} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Nguyên liệu ({recipe.ingredients?.length || 0})
               </Text>
 
@@ -211,12 +225,12 @@ export const RecipeDetailScreen: React.FC = () => {
                 <XStack
                   alignItems="center"
                   gap={4}
-                  backgroundColor="#ffedd5"
+                  backgroundColor={isDarkMode ? '#431407' : '#ffedd5'}
                   paddingHorizontal={10}
                   paddingVertical={6}
                   borderRadius={8}
                   borderWidth={1}
-                  borderColor="#fed7aa"
+                  borderColor={isDarkMode ? '#9a3412' : '#fed7aa'}
                 >
                   <ShoppingCart size={13} color="#ea580c" />
                   <Text fontSize={11} fontWeight="700" color="#ea580c">
@@ -239,20 +253,20 @@ export const RecipeDetailScreen: React.FC = () => {
                       justifyContent="space-between"
                       alignItems="center"
                       padding={12}
-                      backgroundColor={isChecked ? '#f1f5f9' : '#f8fafc'}
+                      backgroundColor={isChecked ? (isDarkMode ? '#0f172a' : '#f1f5f9') : (isDarkMode ? '#1e293b' : '#f8fafc')}
                       borderRadius={10}
                       borderWidth={1}
-                      borderColor={isChecked ? '#cbd5e1' : '#f1f5f9'}
+                      borderColor={isChecked ? (isDarkMode ? '#334155' : '#cbd5e1') : (isDarkMode ? '#334155' : '#f1f5f9')}
                     >
                       <XStack alignItems="center" gap={10} flex={1}>
                         {isChecked ? (
                           <CheckCircle2 size={18} color="#059669" />
                         ) : (
-                          <Circle size={18} color="#94a3b8" />
+                          <Circle size={18} color={isDarkMode ? '#64748b' : '#94a3b8'} />
                         )}
                         <Text
                           fontSize={14}
-                          color={isChecked ? '#94a3b8' : '#0f172a'}
+                          color={isChecked ? (isDarkMode ? '#64748b' : '#94a3b8') : (isDarkMode ? '#f8fafc' : '#0f172a')}
                           textDecorationLine={isChecked ? 'line-through' : 'none'}
                         >
                           {item.name}
@@ -270,7 +284,7 @@ export const RecipeDetailScreen: React.FC = () => {
 
           {/* Phần Các bước thực hiện */}
           <YStack marginTop={12} gap={10}>
-            <Text fontSize={18} fontWeight="800" color="#0f172a">
+            <Text fontSize={18} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Các bước nấu ({recipe.steps?.length || 0})
             </Text>
 
@@ -278,12 +292,12 @@ export const RecipeDetailScreen: React.FC = () => {
               {recipe.steps?.map((step, idx) => (
                 <XStack
                   key={idx}
-                  backgroundColor="#f8fafc"
+                  backgroundColor={isDarkMode ? '#1e293b' : '#f8fafc'}
                   borderRadius={12}
                   padding={14}
                   gap={12}
                   borderWidth={1}
-                  borderColor="#e2e8f0"
+                  borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
                 >
                   <YStack
                     width={28}
@@ -299,13 +313,13 @@ export const RecipeDetailScreen: React.FC = () => {
                   </YStack>
 
                   <YStack flex={1} gap={4}>
-                    <Text fontSize={14} color="#0f172a" lineHeight={20}>
+                    <Text fontSize={14} color={isDarkMode ? '#f8fafc' : '#0f172a'} lineHeight={20}>
                       {step.instruction}
                     </Text>
                     {step.duration_minutes ? (
                       <XStack alignItems="center" gap={4} marginTop={4}>
                         <Clock size={12} color="#64748b" />
-                        <Text fontSize={11} color="#64748b">
+                        <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
                           Khoảng {step.duration_minutes} phút
                         </Text>
                       </XStack>
@@ -319,7 +333,7 @@ export const RecipeDetailScreen: React.FC = () => {
       </ScrollView>
 
       {/* Thanh cố định dưới cùng: Nút bắt đầu nấu (Step-by-Step Mode) */}
-      <View style={styles.bottomBar}>
+      <View style={[styles.bottomBar, { backgroundColor: isDarkMode ? '#1e293b' : '#ffffff', borderTopColor: isDarkMode ? '#334155' : '#e2e8f0' }]}>
         <Button
           size="lg"
           backgroundColor="#ea580c"
@@ -350,7 +364,6 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
@@ -362,7 +375,6 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
@@ -373,9 +385,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    backgroundColor: '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
     elevation: 10,
   },
 });

@@ -2,6 +2,8 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { Button, Text } from 'tamagui';
 import { Category } from '../types/recipe';
+import { useAppSelector } from '../redux/store';
+import { selectIsDarkMode } from '../redux/themeSlice';
 
 interface CategoryPillsProps {
   categories: Category[];
@@ -14,6 +16,8 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
   selectedCategoryId,
   onSelectCategory,
 }) => {
+  const isDarkMode = useAppSelector(selectIsDarkMode);
+
   return (
     <ScrollView
       horizontal
@@ -24,15 +28,15 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
       <Button
         size="sm"
         borderRadius={20}
-        backgroundColor={selectedCategoryId === null ? '#ea580c' : '#f1f5f9'}
+        backgroundColor={selectedCategoryId === null ? '#ea580c' : (isDarkMode ? '#1e293b' : '#f1f5f9')}
         borderWidth={1}
-        borderColor={selectedCategoryId === null ? '#ea580c' : '#e2e8f0'}
+        borderColor={selectedCategoryId === null ? '#ea580c' : (isDarkMode ? '#334155' : '#e2e8f0')}
         onPress={() => onSelectCategory(null)}
       >
         <Text
           fontSize={13}
           fontWeight="700"
-          color={selectedCategoryId === null ? '#ffffff' : '#475569'}
+          color={selectedCategoryId === null ? '#ffffff' : (isDarkMode ? '#cbd5e1' : '#475569')}
         >
           Tất cả món
         </Text>
@@ -46,15 +50,15 @@ export const CategoryPills: React.FC<CategoryPillsProps> = ({
             key={cat.id}
             size="sm"
             borderRadius={20}
-            backgroundColor={isSelected ? '#ea580c' : '#f1f5f9'}
+            backgroundColor={isSelected ? '#ea580c' : (isDarkMode ? '#1e293b' : '#f1f5f9')}
             borderWidth={1}
-            borderColor={isSelected ? '#ea580c' : '#e2e8f0'}
+            borderColor={isSelected ? '#ea580c' : (isDarkMode ? '#334155' : '#e2e8f0')}
             onPress={() => onSelectCategory(cat.id)}
           >
             <Text
               fontSize={13}
               fontWeight="700"
-              color={isSelected ? '#ffffff' : '#475569'}
+              color={isSelected ? '#ffffff' : (isDarkMode ? '#cbd5e1' : '#475569')}
             >
               {cat.name}
             </Text>

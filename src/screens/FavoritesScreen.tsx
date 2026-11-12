@@ -8,39 +8,41 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/recipe';
 import { useAppSelector } from '../redux/store';
 import { selectFavorites } from '../redux/favoriteSlice';
+import { selectIsDarkMode } from '../redux/themeSlice';
 import { RecipeCard } from '../components/RecipeCard';
 
 export const FavoritesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const favorites = useAppSelector(selectFavorites);
+  const isDarkMode = useAppSelector(selectIsDarkMode);
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }} edges={['top']}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {/* Header */}
         <YStack gap={4} marginBottom={16}>
           <XStack alignItems="center" gap={8}>
             <Heart size={22} color="#e11d48" fill="#e11d48" />
-            <Text fontSize={22} fontWeight="800" color="#0f172a">
+            <Text fontSize={22} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
               Món Ăn Yêu Thích ({favorites.length})
             </Text>
           </XStack>
-          <Text fontSize={13} color="#64748b">
-            Danh sách công thức bạn đã lưu lại để trổ tài nấu nướng (Quản lý qua Redux Toolkit).
+          <Text fontSize={13} color={isDarkMode ? '#94a3b8' : '#64748b'}>
+            Lưu lại những công thức nấu ăn bạn yêu thích để dễ dàng trổ tài bất cứ lúc nào.
           </Text>
         </YStack>
 
         {favorites.length === 0 ? (
           <YStack paddingVertical={48} alignItems="center" gap={12}>
-            <View style={styles.emptyIconCircle}>
+            <View style={[styles.emptyIconCircle, { backgroundColor: isDarkMode ? '#881337' : '#ffe4e6' }]}>
               <Heart size={40} color="#e11d48" />
             </View>
-            <Text fontSize={16} fontWeight="700" color="#334155">
+            <Text fontSize={16} fontWeight="700" color={isDarkMode ? '#f8fafc' : '#334155'}>
               Chưa có món ăn yêu thích nào
             </Text>
-            <Text fontSize={13} color="#94a3b8" textAlign="center" maxWidth={280}>
+            <Text fontSize={13} color={isDarkMode ? '#94a3b8' : '#64748b'} textAlign="center" maxWidth={280}>
               Hãy dạo qua Trang chủ và bấm vào biểu tượng trái tim để lưu lại những món bạn thích nhé!
             </Text>
 
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#ffe4e6',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -9,12 +9,14 @@ import { FavoritesScreen } from '../screens/FavoritesScreen';
 import { useAppSelector } from '../redux/store';
 import { selectFavorites } from '../redux/favoriteSlice';
 import { selectShoppingItems } from '../redux/shoppingSlice';
+import { selectIsDarkMode } from '../redux/themeSlice';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export const BottomTabs: React.FC = () => {
   const favorites = useAppSelector(selectFavorites);
   const shoppingItems = useAppSelector(selectShoppingItems);
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   return (
     <Tab.Navigator
@@ -22,11 +24,11 @@ export const BottomTabs: React.FC = () => {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#ea580c',
-        tabBarInactiveTintColor: '#94a3b8',
+        tabBarInactiveTintColor: isDarkMode ? '#64748b' : '#94a3b8',
         tabBarStyle: {
-          backgroundColor: '#ffffff',
+          backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
           borderTopWidth: 1,
-          borderTopColor: '#f1f5f9',
+          borderTopColor: isDarkMode ? '#1e293b' : '#f1f5f9',
           height: 60,
           paddingBottom: 8,
           paddingTop: 6,

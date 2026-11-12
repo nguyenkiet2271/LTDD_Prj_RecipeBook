@@ -5,6 +5,7 @@ import { Heart, Clock, Flame, ChefHat } from 'lucide-react-native';
 import { Recipe } from '../types/recipe';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectIsFavorite, toggleFavorite } from '../redux/favoriteSlice';
+import { selectIsDarkMode } from '../redux/themeSlice';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -19,6 +20,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const isFav = useAppSelector(selectIsFavorite(recipe.id));
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   const handleToggleFavorite = () => {
     dispatch(toggleFavorite(recipe));
@@ -29,32 +31,35 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   return (
     <Card
       style={{ elevation: 2 }}
-      backgroundColor="#ffffff"
+      backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
       borderRadius={16}
       overflow="hidden"
       borderWidth={1}
-      borderColor="#e2e8f0"
+      borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
       marginBottom={14}
       width={isTabletOrLandscape ? '48%' : '100%'}
     >
       <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
         <View style={styles.imageContainer}>
-          {/* Ảnh món ăn dùng thẻ Image chuẩn React Native để hiển thị tốt 100% trên cả Web & Mobile */}
+          {/* Ảnh món ăn */}
           <Image
             source={{ uri: imageUri }}
             style={styles.recipeImage}
             resizeMode="cover"
           />
 
-          {/* Nút thả tim - Quản lý bằng Redux Toolkit */}
+          {/* Nút thả tim */}
           <TouchableOpacity
-            style={styles.heartButton}
+            style={[
+              styles.heartButton,
+              { backgroundColor: isDarkMode ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)' },
+            ]}
             onPress={handleToggleFavorite}
             activeOpacity={0.8}
           >
             <Heart
               size={18}
-              color={isFav ? '#e11d48' : '#64748b'}
+              color={isFav ? '#e11d48' : isDarkMode ? '#94a3b8' : '#64748b'}
               fill={isFav ? '#e11d48' : 'none'}
             />
           </TouchableOpacity>
@@ -72,7 +77,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           <Text
             fontSize={16}
             fontWeight="700"
-            color="#0f172a"
+            color={isDarkMode ? '#f8fafc' : '#0f172a'}
             numberOfLines={1}
             ellipsizeMode="tail"
           >
@@ -81,7 +86,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
 
           <Text
             fontSize={12}
-            color="#64748b"
+            color={isDarkMode ? '#94a3b8' : '#64748b'}
             numberOfLines={2}
             ellipsizeMode="tail"
             lineHeight={18}
@@ -96,26 +101,26 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             marginTop={8}
             paddingTop={8}
             borderTopWidth={1}
-            borderTopColor="#f1f5f9"
+            borderTopColor={isDarkMode ? '#334155' : '#f1f5f9'}
           >
             <XStack alignItems="center" gap={4}>
               <Clock size={13} color="#ea580c" />
-              <Text fontSize={11} color="#64748b" fontWeight="600">
+              <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'} fontWeight="600">
                 {recipe.cook_time} phút
               </Text>
             </XStack>
 
             <XStack alignItems="center" gap={4}>
               <Flame size={13} color="#dc2626" />
-              <Text fontSize={11} color="#64748b" fontWeight="600">
+              <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'} fontWeight="600">
                 {recipe.calories} kcal
               </Text>
             </XStack>
 
             <XStack alignItems="center" gap={4}>
               <ChefHat size={13} color="#059669" />
-              <Text fontSize={11} color="#64748b" fontWeight="600" numberOfLines={1}>
-                {recipe.author_name || 'Chef'}
+              <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'} fontWeight="600" numberOfLines={1}>
+                {recipe.author_name === 'Chef Tuấn' ? 'Chef Huy' : (recipe.author_name || 'Chef Huy')}
               </Text>
             </XStack>
           </XStack>
@@ -144,7 +149,6 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

@@ -19,11 +19,15 @@ import { Category, Recipe } from '../types/recipe';
 import { getCategories, getRecipes } from '../services/recipeService';
 import { RecipeCard } from '../components/RecipeCard';
 import { CategoryPills } from '../components/CategoryPills';
+import { useAppSelector } from '../redux/store';
+import { selectIsDarkMode } from '../redux/themeSlice';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { width } = useWindowDimensions();
   const isTabletOrLandscape = width >= 768;
+
+  const isDarkMode = useAppSelector(selectIsDarkMode);
 
   // Quản lý trạng thái bằng useState/useEffect thủ công
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -71,7 +75,7 @@ export const HomeScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }} edges={['top']}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -83,10 +87,10 @@ export const HomeScreen: React.FC = () => {
         <YStack paddingHorizontal={16} paddingTop={8} paddingBottom={12}>
           <XStack justifyContent="space-between" alignItems="center">
             <YStack>
-              <Text fontSize={13} color="#64748b" fontWeight="600">
+              <Text fontSize={13} color={isDarkMode ? '#94a3b8' : '#64748b'} fontWeight="600">
                 Hôm nay bạn muốn nấu gì? 👨‍🍳
               </Text>
-              <Text fontSize={22} fontWeight="800" color="#0f172a">
+              <Text fontSize={22} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
                 Sổ Tay Ẩm Thực
               </Text>
             </YStack>
@@ -96,18 +100,18 @@ export const HomeScreen: React.FC = () => {
               activeOpacity={0.8}
             >
               <XStack
-                backgroundColor="#ffedd5"
+                backgroundColor={isDarkMode ? '#1e293b' : '#ffedd5'}
                 paddingHorizontal={10}
                 paddingVertical={6}
                 borderRadius={20}
                 alignItems="center"
                 gap={6}
                 borderWidth={1}
-                borderColor="#fed7aa"
+                borderColor={isDarkMode ? '#334155' : '#fed7aa'}
               >
                 <ChefHat size={18} color="#ea580c" />
                 <Text fontSize={12} fontWeight="700" color="#ea580c">
-                  Hồ Sơ
+                  Chef Huy
                 </Text>
               </XStack>
             </TouchableOpacity>
@@ -116,12 +120,12 @@ export const HomeScreen: React.FC = () => {
           {/* Thanh tìm kiếm món ăn */}
           <XStack
             marginTop={12}
-            backgroundColor="#ffffff"
+            backgroundColor={isDarkMode ? '#1e293b' : '#ffffff'}
             borderRadius={12}
             alignItems="center"
             paddingHorizontal={12}
             borderWidth={1}
-            borderColor="#e2e8f0"
+            borderColor={isDarkMode ? '#334155' : '#e2e8f0'}
           >
             <Search size={18} color="#94a3b8" />
             <Input
@@ -132,6 +136,7 @@ export const HomeScreen: React.FC = () => {
               onChangeText={setSearchQuery}
               fontSize={14}
               backgroundColor="transparent"
+              color={isDarkMode ? '#f8fafc' : '#0f172a'}
             />
           </XStack>
         </YStack>
@@ -141,19 +146,19 @@ export const HomeScreen: React.FC = () => {
           <Card
             borderWidth={1}
             borderRadius={16}
-            backgroundColor="#fff7ed"
-            borderColor="#fdba74"
+            backgroundColor={isDarkMode ? '#2a1205' : '#fff7ed'}
+            borderColor={isDarkMode ? '#7c2d12' : '#fdba74'}
             padding={16}
           >
             <XStack justifyContent="space-between" alignItems="center" gap={12}>
               <YStack flex={1} gap={4}>
                 <XStack alignItems="center" gap={6}>
                   <Sparkles size={16} color="#ea580c" />
-                  <Text fontSize={14} fontWeight="800" color="#c2410c">
+                  <Text fontSize={14} fontWeight="800" color={isDarkMode ? '#fb923c' : '#c2410c'}>
                     TRỢ LÝ ĐẦU BẾP AI
                   </Text>
                 </XStack>
-                <Text fontSize={12} color="#7c2d12" lineHeight={17}>
+                <Text fontSize={12} color={isDarkMode ? '#fed7aa' : '#7c2d12'} lineHeight={17}>
                   Tủ lạnh còn gì nấu nấy! Nhập nguyên liệu để AI tạo công thức ngay.
                 </Text>
               </YStack>
@@ -193,7 +198,7 @@ export const HomeScreen: React.FC = () => {
           marginTop={12}
           marginBottom={8}
         >
-          <Text fontSize={18} fontWeight="800" color="#0f172a">
+          <Text fontSize={18} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
             Công thức nổi bật ({recipes.length})
           </Text>
           {isTabletOrLandscape && (
@@ -208,7 +213,7 @@ export const HomeScreen: React.FC = () => {
           {isLoading ? (
             <YStack paddingVertical={40} alignItems="center" gap={12}>
               <ActivityIndicator size="large" color="#ea580c" />
-              <Text fontSize={13} color="#64748b">
+              <Text fontSize={13} color={isDarkMode ? '#94a3b8' : '#64748b'}>
                 Đang tải công thức nấu ăn ngon từ máy chủ...
               </Text>
             </YStack>
@@ -223,7 +228,7 @@ export const HomeScreen: React.FC = () => {
             </YStack>
           ) : recipes.length === 0 ? (
             <YStack paddingVertical={40} alignItems="center" gap={8}>
-              <Text fontSize={16} fontWeight="700" color="#334155">
+              <Text fontSize={16} fontWeight="700" color={isDarkMode ? '#94a3b8' : '#334155'}>
                 Không tìm thấy món ăn nào 🥣
               </Text>
               <Text fontSize={13} color="#94a3b8">
