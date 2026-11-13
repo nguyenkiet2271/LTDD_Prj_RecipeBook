@@ -64,7 +64,8 @@ D:\LTDD_Prj
 │   ├── redux
 │   │   ├── store.ts          # Redux Store cấu hình configureStore
 │   │   ├── favoriteSlice.ts  # Redux Slice quản lý Món yêu thích
-│   │   └── shoppingSlice.ts  # Redux Slice quản lý Danh sách đi chợ
+│   │   ├── shoppingSlice.ts  # Redux Slice quản lý Danh sách đi chợ
+│   │   └── themeSlice.ts     # Redux Slice quản lý Chế độ Dark Mode toàn cầu
 │   ├── components
 │   │   ├── RecipeCard.tsx    # Card món ăn Tamagui Responsive
 │   │   └── CategoryPills.tsx # Thanh lọc danh mục món ăn
