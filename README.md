@@ -1,8 +1,8 @@
 # 🍳 CHEFMATE - SỔ TAY NẤU ĂN THÔNG MINH
 > **BÀI TẬP LỚN MÔN LẬP TRÌNH THIẾT BỊ DI ĐỘNG**  
 > **Nhóm thực hiện:** Nhóm 20
-23649011-Nguyễn Đỗ Anh Kiệt
-23681041-Phan Hoàng Nhật Huy
+>23649011-Nguyễn Đỗ Anh Kiệt
+>23681041-Phan Hoàng Nhật Huy
 > **Nền tảng:** React Native (Expo) • Tamagui UI • Supabase REST API • Redux Toolkit • Gemini AI
 
 ---
