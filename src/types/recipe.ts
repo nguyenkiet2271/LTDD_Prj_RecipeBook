@@ -43,6 +43,14 @@ export interface ShoppingItem {
   recipeTitle?: string;
 }
 
+// Thực phẩm trong tủ lạnh
+export interface FridgeItem {
+  id: string;
+  name: string;
+  amount: string;
+  expiryDate: string; // 'YYYY-MM-DD'
+}
+
 // Người dùng đăng nhập (Supabase Auth)
 export interface AuthUser {
   id: string;
@@ -65,5 +73,6 @@ export type BottomTabParamList = {
   HomeTab: undefined;
   AIChefTab: undefined;
   ShoppingTab: undefined;
+  FridgeTab: undefined;
   FavoritesTab: undefined;
 };

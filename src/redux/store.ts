@@ -3,6 +3,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import favoriteReducer from './favoriteSlice';
 import shoppingReducer from './shoppingSlice';
 import themeReducer from './themeSlice';
+import fridgeReducer from './fridgeSlice';
 import authReducer, { logout, sessionExpired } from './authSlice';
 import { setSessionExpiredHandler } from '../services/authService';
 import { syncMiddleware } from './syncMiddleware';
@@ -10,6 +11,7 @@ import { syncMiddleware } from './syncMiddleware';
 const appReducer = combineReducers({
   favorite: favoriteReducer,
   shopping: shoppingReducer,
+  fridge: fridgeReducer,
   theme: themeReducer,
   auth: authReducer,
 });

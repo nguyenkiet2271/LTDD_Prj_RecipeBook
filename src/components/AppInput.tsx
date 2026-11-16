@@ -34,6 +34,7 @@ export const AppInput: React.FC<AppInputProps> = ({
     style={[
       {
         flex,
+        minWidth: 0, // cho phép ô co lại trong hàng nhiều ô, không tràn ra ngoài
         height: size === 'sm' ? 40 : 46,
         paddingHorizontal: 10,
         borderRadius: 10,

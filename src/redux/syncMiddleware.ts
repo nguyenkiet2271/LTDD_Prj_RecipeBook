@@ -7,6 +7,9 @@ import {
   removeShoppingItemsFromDb,
   updateShoppingCheckedInDb,
   saveDarkMode,
+  addFridgeItemsToDb,
+  updateFridgeItemInDb,
+  removeFridgeItemsFromDb,
 } from '../services/userDataService';
 
 const warn = (what: string) => (e: unknown) => console.warn(`Không đồng bộ được ${what} lên máy chủ`, e);
@@ -24,7 +27,7 @@ export const syncMiddleware: Middleware = (api) => (next) => (action: any) => {
 
   const user = after.auth.user;
   const type: string = action?.type ?? '';
-  if (!user || type === 'favorite/setFavorites' || type === 'shopping/setShoppingItems') {
+  if (!user || type === 'favorite/setFavorites' || type === 'shopping/setShoppingItems' || type === 'fridge/setFridgeItems') {
     return result;
   }
 
@@ -51,6 +54,23 @@ export const syncMiddleware: Middleware = (api) => (next) => (action: any) => {
       const old = beforeMap.get(i.id);
       if (old && old.checked !== i.checked) {
         updateShoppingCheckedInDb(i.id, i.checked).catch(warn('danh sách đi chợ'));
+      }
+    });
+  }
+
+  // ---- Tủ lạnh ----
+  if (before.fridge.items !== after.fridge.items) {
+    const beforeMap = new Map(before.fridge.items.map((i) => [i.id, i]));
+    const afterMap = new Map(after.fridge.items.map((i) => [i.id, i]));
+
+    addFridgeItemsToDb(after.fridge.items.filter((i) => !beforeMap.has(i.id))).catch(warn('tủ lạnh'));
+    removeFridgeItemsFromDb(before.fridge.items.filter((i) => !afterMap.has(i.id)).map((i) => i.id)).catch(
+      warn('tủ lạnh')
+    );
+    after.fridge.items.forEach((i) => {
+      const old = beforeMap.get(i.id);
+      if (old && (old.name !== i.name || old.amount !== i.amount || old.expiryDate !== i.expiryDate)) {
+        updateFridgeItemInDb(i).catch(warn('tủ lạnh'));
       }
     });
   }

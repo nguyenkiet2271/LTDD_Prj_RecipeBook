@@ -1,5 +1,5 @@
 import { apiClient } from '../config/supabase';
-import { Recipe, ShoppingItem } from '../types/recipe';
+import { FridgeItem, Recipe, ShoppingItem } from '../types/recipe';
 
 // Không cần Supabase trả lại bản ghi khi ghi dữ liệu -> nhẹ hơn
 const MINIMAL = { Prefer: 'return=minimal' };
@@ -82,6 +82,42 @@ export const removeShoppingItemsFromDb = async (ids: string[]): Promise<void> =>
   await apiClient.delete(`/shopping_items?id=in.${encodeURIComponent(quoteList(ids))}`, {
     headers: MINIMAL,
   });
+};
+
+// ---------------- Tủ lạnh ----------------
+
+interface FridgeRow {
+  id: string;
+  name: string;
+  amount: string;
+  expiry_date: string;
+}
+
+export const fetchFridgeItems = async (): Promise<FridgeItem[]> => {
+  const res = await apiClient.get<FridgeRow[]>('/fridge_items?select=*&order=expiry_date.asc');
+  return res.data.map((r) => ({ id: r.id, name: r.name, amount: r.amount, expiryDate: r.expiry_date }));
+};
+
+export const addFridgeItemsToDb = async (items: FridgeItem[]): Promise<void> => {
+  if (items.length === 0) return;
+  await apiClient.post(
+    '/fridge_items',
+    items.map((i) => ({ id: i.id, name: i.name, amount: i.amount, expiry_date: i.expiryDate })),
+    { headers: MINIMAL }
+  );
+};
+
+export const updateFridgeItemInDb = async (item: FridgeItem): Promise<void> => {
+  await apiClient.patch(
+    `/fridge_items?id=eq.${encodeURIComponent(item.id)}`,
+    { name: item.name, amount: item.amount, expiry_date: item.expiryDate },
+    { headers: MINIMAL }
+  );
+};
+
+export const removeFridgeItemsFromDb = async (ids: string[]): Promise<void> => {
+  if (ids.length === 0) return;
+  await apiClient.delete(`/fridge_items?id=in.${encodeURIComponent(quoteList(ids))}`, { headers: MINIMAL });
 };
 
 // ---------------- Dark mode (profiles.dark_mode) ----------------
