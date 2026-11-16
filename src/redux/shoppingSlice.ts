@@ -7,28 +7,17 @@ interface ShoppingState {
 }
 
 const initialState: ShoppingState = {
-  items: [
-    {
-      id: 'init-1',
-      name: 'Thịt bò thăn',
-      amount: '300g',
-      checked: false,
-      recipeTitle: 'Phở Bò Tái Lăn Hà Nội',
-    },
-    {
-      id: 'init-2',
-      name: 'Bánh phở tươi',
-      amount: '500g',
-      checked: true,
-      recipeTitle: 'Phở Bò Tái Lăn Hà Nội',
-    },
-  ],
+  items: [],
 };
 
 export const shoppingSlice = createSlice({
   name: 'shopping',
   initialState,
   reducers: {
+    // Nạp danh sách từ database sau khi đăng nhập (không đồng bộ ngược lên server)
+    setShoppingItems: (state, action: PayloadAction<ShoppingItem[]>) => {
+      state.items = action.payload;
+    },
     addIngredientsToShoppingList: (
       state,
       action: PayloadAction<{ recipeTitle: string; ingredients: Ingredient[] }>
@@ -68,6 +57,7 @@ export const shoppingSlice = createSlice({
 });
 
 export const {
+  setShoppingItems,
   addIngredientsToShoppingList,
   toggleItemChecked,
   removeShoppingItem,

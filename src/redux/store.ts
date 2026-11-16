@@ -5,6 +5,7 @@ import shoppingReducer from './shoppingSlice';
 import themeReducer from './themeSlice';
 import authReducer, { logout, sessionExpired } from './authSlice';
 import { setSessionExpiredHandler } from '../services/authService';
+import { syncMiddleware } from './syncMiddleware';
 
 const appReducer = combineReducers({
   favorite: favoriteReducer,
@@ -29,7 +30,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }),
+    }).concat(syncMiddleware),
 });
 
 setSessionExpiredHandler(() => store.dispatch(sessionExpired()));

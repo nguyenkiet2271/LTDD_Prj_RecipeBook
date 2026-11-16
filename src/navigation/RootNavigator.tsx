@@ -12,6 +12,7 @@ import { RegisterScreen } from '../screens/RegisterScreen';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { restoreSession, selectAuthHydrated, selectUser } from '../redux/authSlice';
 import { selectIsDarkMode } from '../redux/themeSlice';
+import { loadUserData } from '../redux/userDataThunks';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,6 +26,11 @@ export const RootNavigator: React.FC = () => {
   useEffect(() => {
     dispatch(restoreSession());
   }, [dispatch]);
+
+  // Đăng nhập xong (hoặc mở lại app đã đăng nhập): tải dữ liệu cá nhân từ database
+  useEffect(() => {
+    if (user?.id) dispatch(loadUserData(user.id));
+  }, [dispatch, user?.id]);
 
   if (!hydrated) {
     return (
