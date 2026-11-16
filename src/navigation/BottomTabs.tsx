@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Compass, Sparkles, ShoppingCart, Heart } from 'lucide-react-native';
 import { BottomTabParamList } from '../types/recipe';
 import { HomeScreen } from '../screens/HomeScreen';
@@ -17,6 +18,9 @@ export const BottomTabs: React.FC = () => {
   const favorites = useAppSelector(selectFavorites);
   const shoppingItems = useAppSelector(selectShoppingItems);
   const isDarkMode = useAppSelector(selectIsDarkMode);
+  // Chừa chỗ cho thanh điều hướng / vạch home của điện thoại để tab bar không bị che
+  const insets = useSafeAreaInsets();
+  const bottomInset = Math.max(insets.bottom, 8);
 
   return (
     <Tab.Navigator
@@ -29,8 +33,8 @@ export const BottomTabs: React.FC = () => {
           backgroundColor: isDarkMode ? '#0f172a' : '#ffffff',
           borderTopWidth: 1,
           borderTopColor: isDarkMode ? '#1e293b' : '#f1f5f9',
-          height: 60,
-          paddingBottom: 8,
+          height: 52 + bottomInset,
+          paddingBottom: bottomInset,
           paddingTop: 6,
         },
         tabBarLabelStyle: {

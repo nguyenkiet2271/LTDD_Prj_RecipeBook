@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   useWindowDimensions,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Switch,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -40,6 +41,8 @@ import { useAppDispatch, useAppSelector } from '../redux/store';
 import { selectFavorites } from '../redux/favoriteSlice';
 import { selectShoppingItems } from '../redux/shoppingSlice';
 import { selectIsDarkMode, toggleTheme } from '../redux/themeSlice';
+import { logout, selectUser } from '../redux/authSlice';
+import { countMyRecipes } from '../services/authService';
 
 export const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -51,7 +54,23 @@ export const ProfileScreen: React.FC = () => {
   const shoppingItems = useAppSelector(selectShoppingItems);
   const isDarkMode = useAppSelector(selectIsDarkMode);
 
+  const user = useAppSelector(selectUser);
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [myRecipeCount, setMyRecipeCount] = useState<number | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Đếm số món người dùng này đã đăng (lưu trong database)
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    countMyRecipes(user.id)
+      .then((n) => !cancelled && setMyRecipeCount(n))
+      .catch(() => !cancelled && setMyRecipeCount(0));
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -62,7 +81,11 @@ export const ProfileScreen: React.FC = () => {
         {
           text: 'Đăng xuất',
           style: 'destructive',
-          onPress: () => Alert.alert('Thông báo', 'Đã đăng xuất tài khoản thành công!'),
+          onPress: async () => {
+            setIsLoggingOut(true);
+            // Xóa phiên ở server + máy; RootNavigator tự đưa về màn hình đăng nhập
+            await dispatch(logout());
+          },
         },
       ]
     );
@@ -148,7 +171,7 @@ export const ProfileScreen: React.FC = () => {
             <YStack flex={1} gap={2}>
               <XStack alignItems="center" gap={6}>
                 <Text fontSize={18} fontWeight="800" color={isDarkMode ? '#f8fafc' : '#0f172a'}>
-                  Chef Huy
+                  {user?.fullName ?? 'Đầu bếp'}
                 </Text>
                 <XStack
                   backgroundColor="#ffedd5"
@@ -166,7 +189,7 @@ export const ProfileScreen: React.FC = () => {
               </XStack>
 
               <Text fontSize={13} color={isDarkMode ? '#94a3b8' : '#64748b'}>
-                huy.chefmate@gmail.com
+                {user?.email}
               </Text>
               <Text fontSize={11} color="#059669" fontWeight="600">
                 Thành viên Bếp Vàng • Ẩm thực gia
@@ -188,7 +211,7 @@ export const ProfileScreen: React.FC = () => {
               onPress={() => navigation.navigate('CreateRecipe')}
             >
               <Text fontSize={16} fontWeight="800" color="#ea580c">
-                8
+                {myRecipeCount === null ? '…' : myRecipeCount}
               </Text>
               <Text fontSize={11} color={isDarkMode ? '#94a3b8' : '#64748b'}>
                 Món đã tạo
@@ -437,14 +460,20 @@ export const ProfileScreen: React.FC = () => {
           borderWidth={1}
           borderColor={isDarkMode ? '#b91c1c' : '#fca5a5'}
           borderRadius={14}
+          disabled={isLoggingOut}
           onPress={handleLogout}
+          testID="logout-button"
         >
-          <XStack alignItems="center" gap={8}>
-            <LogOut size={18} color="#dc2626" />
-            <Text color="#dc2626" fontWeight="800" fontSize={14}>
-              Đăng Xuất Tài Khoản
-            </Text>
-          </XStack>
+          {isLoggingOut ? (
+            <ActivityIndicator color="#dc2626" />
+          ) : (
+            <XStack alignItems="center" gap={8}>
+              <LogOut size={18} color="#dc2626" />
+              <Text color="#dc2626" fontWeight="800" fontSize={14}>
+                Đăng Xuất Tài Khoản
+              </Text>
+            </XStack>
+          )}
         </Button>
       </ScrollView>
     </SafeAreaView>

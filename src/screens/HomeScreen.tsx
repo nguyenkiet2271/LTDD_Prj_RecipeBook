@@ -10,7 +10,8 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
+import { YStack, XStack, Text, Button, Card } from 'tamagui';
+import { AppInput as Input } from '../components/AppInput';
 import { Search, Sparkles, Plus, ChefHat, RefreshCw } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,6 +22,7 @@ import { RecipeCard } from '../components/RecipeCard';
 import { CategoryPills } from '../components/CategoryPills';
 import { useAppSelector } from '../redux/store';
 import { selectIsDarkMode } from '../redux/themeSlice';
+import { selectUser } from '../redux/authSlice';
 
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -28,6 +30,7 @@ export const HomeScreen: React.FC = () => {
   const isTabletOrLandscape = width >= 768;
 
   const isDarkMode = useAppSelector(selectIsDarkMode);
+  const user = useAppSelector(selectUser);
 
   // Quản lý trạng thái bằng useState/useEffect thủ công
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -111,7 +114,7 @@ export const HomeScreen: React.FC = () => {
               >
                 <ChefHat size={18} color="#ea580c" />
                 <Text fontSize={12} fontWeight="700" color="#ea580c">
-                  Chef Huy
+                  {user?.fullName ?? 'Tài khoản'}
                 </Text>
               </XStack>
             </TouchableOpacity>

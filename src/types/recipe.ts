@@ -31,6 +31,7 @@ export interface Recipe {
   ingredients: Ingredient[];
   steps: CookingStep[];
   author_name: string;
+  author_id?: string | null; // id người dùng (Supabase Auth) đã đăng món này
   created_at?: string;
 }
 
@@ -42,8 +43,17 @@ export interface ShoppingItem {
   recipeTitle?: string;
 }
 
+// Người dùng đăng nhập (Supabase Auth)
+export interface AuthUser {
+  id: string;
+  email: string;
+  fullName: string;
+}
+
 // Kiểu tham số điều hướng (Navigation Params)
 export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
   MainTabs: undefined;
   RecipeDetail: { recipeId: string; recipe?: Recipe };
   CookingStep: { recipe: Recipe };

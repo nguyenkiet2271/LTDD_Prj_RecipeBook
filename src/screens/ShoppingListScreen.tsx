@@ -5,7 +5,8 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
+import { YStack, XStack, Text, Button, Card } from 'tamagui';
+import { AppInput as Input } from '../components/AppInput';
 import {
   ShoppingCart,
   CheckCircle2,
