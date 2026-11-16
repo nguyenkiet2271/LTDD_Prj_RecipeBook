@@ -13,7 +13,7 @@ import {
 } from '../redux/fridgeSlice';
 import { selectIsDarkMode } from '../redux/themeSlice';
 import { FridgeItem } from '../types/recipe';
-import { addDaysISO, daysUntil, formatVN, parseVN } from '../utils/date';
+import { addDaysISO, daysUntil, formatVN, parseISODate, parseVN, toISODate } from '../utils/date';
 
 // iOS có bàn phím số kèm dấu '/', Android thì dùng bàn phím thường
 const DATE_KEYBOARD = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'default';
@@ -34,6 +34,15 @@ const statusLabel = (days: number): string => {
   if (days < 0) return `Hết hạn ${-days} ngày trước`;
   if (days === 0) return 'Hết hạn hôm nay';
   return `Còn ${days} ngày`;
+};
+
+// Cộng thêm n ngày vào ngày đang nhập (nếu ô trống/sai định dạng thì cộng từ hôm nay).
+// Nhờ vậy bấm nút nhanh nhiều lần sẽ cộng dồn: +1 tuần, +1 tuần => 14 ngày...
+const addDaysToText = (text: string, days: number): string => {
+  const baseIso = parseVN(text) ?? addDaysISO(0);
+  const d = parseISODate(baseIso);
+  d.setDate(d.getDate() + days);
+  return formatVN(toISODate(d));
 };
 
 export const FridgeScreen: React.FC = () => {
@@ -119,12 +128,16 @@ export const FridgeScreen: React.FC = () => {
     ]);
   };
 
-  const QuickChips: React.FC<{ onPick: (iso: string) => void }> = ({ onPick }) => (
+  // Lưu ý: đây là HÀM render (không phải component) để các nút không bị tạo lại mỗi lần state đổi,
+  // nhờ đó có thể bấm liên tục nhiều lần.
+  const renderQuickChips = (onAdd: (days: number) => void, onReset: () => void) => (
     <XStack flexWrap="wrap" gap={6}>
       {QUICK_DAYS.map((q) => (
         <TouchableOpacity
           key={q.days}
-          onPress={() => onPick(addDaysISO(q.days))}
+          onPress={() => onAdd(q.days)}
+          activeOpacity={0.6}
+          hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
           style={{
             paddingHorizontal: 10,
             paddingVertical: 5,
@@ -139,6 +152,23 @@ export const FridgeScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
       ))}
+      <TouchableOpacity
+        onPress={onReset}
+        activeOpacity={0.6}
+        hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderRadius: 14,
+          borderWidth: 1,
+          borderColor: cardBorder,
+          backgroundColor: isDarkMode ? '#0f172a' : '#f1f5f9',
+        }}
+      >
+        <Text fontSize={11} fontWeight="700" color={text2}>
+          Đặt lại (hôm nay)
+        </Text>
+      </TouchableOpacity>
     </XStack>
   );
 
@@ -266,12 +296,16 @@ export const FridgeScreen: React.FC = () => {
             testID="fridge-expiry"
           />
           <YStack marginTop={8}>
-            <QuickChips
-              onPick={(iso) => {
-                setExpiryText(formatVN(iso));
+            {renderQuickChips(
+              (days) => {
+                setExpiryText((prev) => addDaysToText(prev, days));
                 setError(null);
-              }}
-            />
+              },
+              () => {
+                setExpiryText(formatVN(addDaysISO(0)));
+                setError(null);
+              }
+            )}
           </YStack>
 
           {error ? (
@@ -397,12 +431,16 @@ export const FridgeScreen: React.FC = () => {
                           </XStack>
                         </Button>
                       </XStack>
-                      <QuickChips
-                        onPick={(iso) => {
-                          setEditText(formatVN(iso));
+                      {renderQuickChips(
+                        (d) => {
+                          setEditText((prev) => addDaysToText(prev, d));
                           setEditError(null);
-                        }}
-                      />
+                        },
+                        () => {
+                          setEditText(formatVN(addDaysISO(0)));
+                          setEditError(null);
+                        }
+                      )}
                       {editError ? (
                         <Text fontSize={12} color="#ef4444" fontWeight="600">
                           {editError}
