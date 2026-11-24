@@ -1,4 +1,5 @@
 import React from 'react';
+import './src/utils/alert'; // Làm Alert.alert hoạt động trên trình duyệt (web)
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';

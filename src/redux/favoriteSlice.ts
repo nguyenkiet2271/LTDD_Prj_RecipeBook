@@ -14,6 +14,10 @@ export const favoriteSlice = createSlice({
   name: 'favorite',
   initialState,
   reducers: {
+    // Nạp danh sách từ database sau khi đăng nhập (không đồng bộ ngược lên server)
+    setFavorites: (state, action: PayloadAction<Recipe[]>) => {
+      state.favorites = action.payload;
+    },
     addFavorite: (state, action: PayloadAction<Recipe>) => {
       const exists = state.favorites.some((item) => item.id === action.payload.id);
       if (!exists) {
@@ -34,7 +38,7 @@ export const favoriteSlice = createSlice({
   },
 });
 
-export const { addFavorite, removeFavorite, toggleFavorite } = favoriteSlice.actions;
+export const { setFavorites, addFavorite, removeFavorite, toggleFavorite } = favoriteSlice.actions;
 
 // Selector lấy danh sách yêu thích
 export const selectFavorites = (state: RootState) => state.favorite.favorites;

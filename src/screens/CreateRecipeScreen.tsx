@@ -7,7 +7,8 @@ import {
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
+import { YStack, XStack, Text, Button, Card } from 'tamagui';
+import { AppInput as Input } from '../components/AppInput';
 import {
   ArrowLeft,
   Plus,
@@ -21,10 +22,12 @@ import { createRecipe } from '../services/recipeService';
 import { Ingredient, CookingStep } from '../types/recipe';
 import { useAppSelector } from '../redux/store';
 import { selectIsDarkMode } from '../redux/themeSlice';
+import { selectUser } from '../redux/authSlice';
 
 export const CreateRecipeScreen: React.FC = () => {
   const navigation = useNavigation();
   const isDarkMode = useAppSelector(selectIsDarkMode);
+  const user = useAppSelector(selectUser);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -130,7 +133,8 @@ export const CreateRecipeScreen: React.FC = () => {
         servings: parseInt(servings, 10) || 2,
         ingredients: validIngredients,
         steps: validSteps,
-        author_name: 'Chef Huy',
+        author_name: user?.fullName || 'Chef Huy',
+        author_id: user?.id ?? null,
       });
 
       Alert.alert('Thành công', 'Đã thêm công thức mới lên Supabase thành công!', [

@@ -7,7 +7,8 @@ import {
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
+import { YStack, XStack, Text, Button, Card } from 'tamagui';
+import { AppInput as Input } from '../components/AppInput';
 import {
   Sparkles,
   Plus,
@@ -25,6 +26,7 @@ import { generateAIRecipe } from '../services/geminiService';
 import { createRecipe } from '../services/recipeService';
 import { useAppSelector } from '../redux/store';
 import { selectIsDarkMode } from '../redux/themeSlice';
+import { selectUser } from '../redux/authSlice';
 
 const SUGGESTED_INGREDIENTS = [
   'Trứng gà',
@@ -41,6 +43,7 @@ const SUGGESTED_INGREDIENTS = [
 export const AIChefScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const isDarkMode = useAppSelector(selectIsDarkMode);
+  const user = useAppSelector(selectUser);
 
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([
     'Trứng gà',
@@ -101,7 +104,8 @@ export const AIChefScreen: React.FC = () => {
         servings: recipe.servings,
         ingredients: recipe.ingredients,
         steps: recipe.steps,
-        author_name: 'Chef Huy',
+        author_name: user?.fullName || 'Chef Huy',
+        author_id: user?.id ?? null,
       });
       Alert.alert('Thành công', 'Đã lưu món ăn của AI vào Sổ tay ẩm thực!');
     } catch (error) {

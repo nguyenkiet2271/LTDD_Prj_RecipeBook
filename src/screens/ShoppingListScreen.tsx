@@ -5,7 +5,8 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { YStack, XStack, Text, Input, Button, Card } from 'tamagui';
+import { YStack, XStack, Text, Button, Card } from 'tamagui';
+import { AppInput as Input } from '../components/AppInput';
 import {
   ShoppingCart,
   CheckCircle2,
@@ -13,6 +14,7 @@ import {
   Trash2,
   Plus,
   CheckSquare,
+  Refrigerator,
 } from 'lucide-react-native';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import {
@@ -23,6 +25,8 @@ import {
   addCustomItem,
 } from '../redux/shoppingSlice';
 import { selectIsDarkMode } from '../redux/themeSlice';
+import { addFridgeItems } from '../redux/fridgeSlice';
+import { addDaysISO, formatVN } from '../utils/date';
 
 export const ShoppingListScreen: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -50,6 +54,21 @@ export const ShoppingListScreen: React.FC = () => {
   });
 
   const completedCount = items.filter((i) => i.checked).length;
+
+  // Chuyển các món đã mua vào tủ lạnh (hạn tạm tính 7 ngày, chỉnh lại ở màn Tủ lạnh) rồi xóa khỏi danh sách đi chợ
+  const handleMoveToFridge = () => {
+    const bought = items.filter((i) => i.checked);
+    if (bought.length === 0) return;
+    const defaultExpiry = addDaysISO(7);
+    dispatch(
+      addFridgeItems(bought.map((i) => ({ name: i.name, amount: i.amount, expiryDate: defaultExpiry })))
+    );
+    dispatch(clearCompletedItems());
+    Alert.alert(
+      'Đã chuyển vào tủ lạnh',
+      `${bought.length} món đã được thêm vào tủ lạnh với hạn dùng tạm tính ${formatVN(defaultExpiry)}. Vào tab "Tủ lạnh" để chỉnh lại hạn dùng chính xác.`
+    );
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? '#0f172a' : '#f8fafc' }} edges={['top']}>
@@ -130,6 +149,27 @@ export const ShoppingListScreen: React.FC = () => {
             </Button>
           </XStack>
         </Card>
+
+        {/* Chuyển đồ đã mua vào tủ lạnh */}
+        {completedCount > 0 && (
+          <Button
+            size="md"
+            marginBottom={12}
+            backgroundColor={isDarkMode ? '#064e3b' : '#d1fae5'}
+            borderWidth={1}
+            borderColor={isDarkMode ? '#047857' : '#6ee7b7'}
+            borderRadius={12}
+            onPress={handleMoveToFridge}
+            testID="move-to-fridge"
+          >
+            <XStack alignItems="center" gap={6}>
+              <Refrigerator size={16} color="#059669" />
+              <Text fontSize={13} fontWeight="800" color="#059669">
+                Chuyển {completedCount} món đã mua vào tủ lạnh
+              </Text>
+            </XStack>
+          </Button>
+        )}
 
         {/* Bộ lọc All / Pending / Completed */}
         <XStack gap={8} marginBottom={12}>
